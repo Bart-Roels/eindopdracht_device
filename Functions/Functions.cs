@@ -50,7 +50,9 @@ namespace MCT.Function
             }
             catch (System.Exception ex)
             {
-                return new BadRequestObjectResult(ex);
+                // Log exception
+                log.LogError(ex.Message);
+                return new BadRequestObjectResult("something went wrong");
             }
 
         }
@@ -88,7 +90,10 @@ namespace MCT.Function
             }
             catch (System.Exception ex)
             {
-                return new BadRequestObjectResult(ex);
+                // Log exception
+                log.LogError(ex.Message);
+                // Return error
+                return new BadRequestObjectResult("Something went wrong");
             }
 
 
