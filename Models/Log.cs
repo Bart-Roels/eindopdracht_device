@@ -14,11 +14,11 @@ namespace eindopdracht_device.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [JsonProperty(PropertyName = "Description")]
+        [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
 
         [JsonProperty(PropertyName = "time")]
-        public TimeSpan Time { get; set; }
+        public byte Time { get; set; }
 
         [JsonProperty(PropertyName = "distance")]
         public double Distance { get; set; }
