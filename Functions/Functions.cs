@@ -26,7 +26,7 @@ namespace MCT.Function
             Log logItem = JsonConvert.DeserializeObject<Log>(requestBody);
 
             // Cosmos DB connection string
-            string connectionString = Environment.GetEnvironmentVariable("CosmosDBConnection");
+            string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
 
             // Add to Cosmos DB
             CosmosClientOptions options = new CosmosClientOptions()

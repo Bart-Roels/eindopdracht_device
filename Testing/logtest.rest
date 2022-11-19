@@ -1,0 +1,12 @@
+# Add Log
+POST http://localhost:7071/api/v1/addlog HTTP/1.1 
+Content-Type: application/json
+
+
+    {
+        "date": "19-11-2022",
+        "name": "Instructie vlucht 5111217781815110 ",
+        "description": "Vucht van 2 uur",
+        "time": 120,
+        "balloon": "G-CLKD",
+    }

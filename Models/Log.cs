@@ -9,7 +9,7 @@ namespace eindopdracht_device.Models
         public Guid Id { get; set; }
 
         [JsonProperty(PropertyName = "date")]
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
 
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
