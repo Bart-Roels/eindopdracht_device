@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using eindopdracht_device.Models;
 using Microsoft.Azure.Cosmos;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MCT.Function
 {
@@ -42,6 +44,35 @@ namespace MCT.Function
             await container.CreateItemAsync(logItem, new PartitionKey(logItem.HotAirBalloon));
             return new OkObjectResult(logItem);
             
+        }
+
+        [FunctionName("ReadLog")]
+        public static async Task<IActionResult> ReadLog([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "v1/logs")] HttpRequest req,ILogger log)
+        {
+            // Cosmos DB connection string
+            string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
+            
+            // Connect to Cosmos DB
+            CosmosClientOptions options = new CosmosClientOptions()
+            {
+                ConnectionMode = ConnectionMode.Gateway
+            };
+            var cosmosClient = new CosmosClient(connectionString, options);
+
+            // Get all logs
+            var container = cosmosClient.GetContainer("hota", "logs");
+            var sqlQueryText = "SELECT * FROM c";
+            var queryDefinition = new QueryDefinition(sqlQueryText);
+            var iterator = container.GetItemQueryIterator<Log>(queryDefinition);
+            List<Log> logs = new List<Log>();
+            while (iterator.HasMoreResults)
+            {
+                var response = await iterator.ReadNextAsync();
+                logs.AddRange(response.ToList());
+            }
+
+            return new OkObjectResult(logs);
+     
         }
     }
 }
