@@ -14,3 +14,20 @@ Content-Type: application/json
 ### Get logs 
 GET http://localhost:7071/api/v1/logs HTTP/1.1
 Content-Type: application/json
+
+### Delete log
+DELETE http://localhost:7071/api/v1/log/74caf36f-49de-49f9-be4d-646b42e36b9a HTTP/1.1
+
+### Update log
+PUT http://localhost:7071/api/v1/log/704ce6f3-32e6-4b64-a420-ad5eeb7b37f2 HTTP/1.1
+Content-Type: application/json
+
+    {
+        "id": "704ce6f3-32e6-4b64-a420-ad5eeb7b37f2",
+        "date": "19-11-2022",
+        "name": "Instructie vlucht 5",
+        "description": "Vucht van 1 uur",
+        "time": 60,
+        "balloon": "G-CLKD",
+    }
+

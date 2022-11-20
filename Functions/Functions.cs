@@ -98,5 +98,92 @@ namespace MCT.Function
 
 
         }
+
+        [FunctionName("DeleteLog")]
+        public static async Task<IActionResult> DeleteLog([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "v1/log/{id}")] HttpRequest req, string id, ILogger log)
+        {
+            try
+            {
+                // Cosmos DB connection string
+                string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
+
+                // Connect to Cosmos DB
+                CosmosClientOptions options = new CosmosClientOptions()
+                {
+                    ConnectionMode = ConnectionMode.Gateway
+                };
+                var cosmosClient = new CosmosClient(connectionString, options);
+
+                // Delete log whith id
+                var container = cosmosClient.GetContainer("hota", "logs");
+
+                // Get partition key
+                var sqlQueryText = $"SELECT * FROM c WHERE c.id = '{id}'";
+                var queryDefinition = new QueryDefinition(sqlQueryText);
+                var iterator = container.GetItemQueryIterator<Log>(queryDefinition);
+                List<Log> logs = new List<Log>();
+                while (iterator.HasMoreResults)
+                {
+                    var response = await iterator.ReadNextAsync();
+                    logs.AddRange(response.ToList());
+                }
+
+                // Delete log
+                await container.DeleteItemAsync<Log>(id, new PartitionKey(logs[0].HotAirBalloon));
+
+                return new OkObjectResult("Log deleted with id: " + id);
+
+            }
+            catch (System.Exception ex)
+            {
+                // Log exception
+                log.LogError(ex.Message);
+                // Return error
+                return new BadRequestObjectResult("Something went wrong");
+            }
+
+
+        }
+
+        [FunctionName("EdditLog")]
+        public static async Task<IActionResult> EdditLog([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "v1/log/{id}")] HttpRequest req, string id, ILogger log)
+        {
+            try
+            {
+                // Cosmos DB connection string
+                string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
+                // Connect to Cosmos DB
+                CosmosClientOptions options = new CosmosClientOptions()
+                {
+                    ConnectionMode = ConnectionMode.Gateway
+                };
+                var cosmosClient = new CosmosClient(connectionString, options);
+
+                // Get request body
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+                // Deserialize JSON to Log object
+                Log logItem = JsonConvert.DeserializeObject<Log>(requestBody);
+
+                
+
+                // Update log whith id
+                var container = cosmosClient.GetContainer("hota", "logs");
+                await container.ReplaceItemAsync<Log>(logItem, id, new PartitionKey(logItem.HotAirBalloon));
+
+                return new OkObjectResult("Log updated with id: " + id);
+
+
+            }
+            catch (System.Exception ex)
+            {
+                // Log exception
+                log.LogError(ex.Message);
+                // Return error
+                return new BadRequestObjectResult("Something went wrong");
+            }
+        }
+
+
     }
 }
