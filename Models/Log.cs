@@ -6,7 +6,7 @@ namespace eindopdracht_device.Models
     public class Log
     {
         [JsonProperty(PropertyName = "id")]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty(PropertyName = "date")]
         public string Date { get; set; }
@@ -35,7 +35,7 @@ namespace eindopdracht_device.Models
         [JsonProperty(PropertyName = "landingLocation")]
         public string LandingLocation { get; set; }
 
-        
-                      
+
+
     }
 }

@@ -42,7 +42,7 @@ namespace MCT.Function
                 var cosmosClient = new CosmosClient(connectionString, options);
 
                 // Create new guid for the id
-                logItem.Id = Guid.NewGuid();
+                logItem.Id = Guid.NewGuid().ToString();
                 var container = cosmosClient.GetContainer("hota", "logs");
                 await container.CreateItemAsync(logItem, new PartitionKey(logItem.HotAirBalloon));
                 return new OkObjectResult(logItem);
@@ -165,7 +165,7 @@ namespace MCT.Function
                 // Deserialize JSON to Log object
                 Log logItem = JsonConvert.DeserializeObject<Log>(requestBody);
 
-                
+
 
                 // Update log whith id
                 var container = cosmosClient.GetContainer("hota", "logs");
