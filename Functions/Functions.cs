@@ -16,6 +16,9 @@ namespace MCT.Function
 {
     public static class Functions
     {
+        // Read connection string from app settings
+        private static readonly string EndpointUri = Environment.GetEnvironmentVariable("CosmosDB");
+
         [FunctionName("AddLog")]
         public static async Task<IActionResult> AddLog([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "v1/addlog")] HttpRequest req, ILogger log)
         {
@@ -30,8 +33,6 @@ namespace MCT.Function
                 // Deserialize JSON to Log object
                 Log logItem = JsonConvert.DeserializeObject<Log>(requestBody);
 
-                // Cosmos DB connection string
-                string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
 
                 // Add to Cosmos DB
                 CosmosClientOptions options = new CosmosClientOptions()
@@ -39,7 +40,7 @@ namespace MCT.Function
                     ConnectionMode = ConnectionMode.Gateway
                 };
 
-                var cosmosClient = new CosmosClient(connectionString, options);
+                var cosmosClient = new CosmosClient(EndpointUri, options);
 
                 // Create new guid for the id
                 logItem.Id = Guid.NewGuid();
@@ -63,15 +64,12 @@ namespace MCT.Function
             try
             {
 
-                // Cosmos DB connection string
-                string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
-
                 // Connect to Cosmos DB
                 CosmosClientOptions options = new CosmosClientOptions()
                 {
                     ConnectionMode = ConnectionMode.Gateway
                 };
-                var cosmosClient = new CosmosClient(connectionString, options);
+                var cosmosClient = new CosmosClient(EndpointUri, options);
 
                 // Get all logs
                 var container = cosmosClient.GetContainer("hota", "logs");
@@ -104,15 +102,13 @@ namespace MCT.Function
         {
             try
             {
-                // Cosmos DB connection string
-                string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
 
                 // Connect to Cosmos DB
                 CosmosClientOptions options = new CosmosClientOptions()
                 {
                     ConnectionMode = ConnectionMode.Gateway
                 };
-                var cosmosClient = new CosmosClient(connectionString, options);
+                var cosmosClient = new CosmosClient(EndpointUri, options);
 
                 // Delete log whith id
                 var container = cosmosClient.GetContainer("hota", "logs");
@@ -150,14 +146,12 @@ namespace MCT.Function
         {
             try
             {
-                // Cosmos DB connection string
-                string connectionString = Environment.GetEnvironmentVariable("CosmosDB");
                 // Connect to Cosmos DB
                 CosmosClientOptions options = new CosmosClientOptions()
                 {
                     ConnectionMode = ConnectionMode.Gateway
                 };
-                var cosmosClient = new CosmosClient(connectionString, options);
+                var cosmosClient = new CosmosClient(EndpointUri, options);
 
                 // Get request body
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
